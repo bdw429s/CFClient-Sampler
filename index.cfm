@@ -30,7 +30,7 @@
 				<p>
 			</div>			
 			<div data-role="footer" data-position="fixed">
-				<h4>By <a href="http://www.codersrevolution.com" target="_new">Brad Wood</a></h4>
+				<h4>By <a href="http://www.codersrevolution.com" onClick="navigator.app.loadUrl(this.href, { openExternal:true }); return false;">Brad Wood</a></h4>
 			</div>
 		</div>
 	
@@ -53,7 +53,7 @@
 				</div>						
 			</div>
 			<div data-role="footer" data-position="fixed">
-				<h4>By <a href="http://www.codersrevolution.com" target="_new">brad wood</a></h4>
+				<h4>By <a href="http://www.codersrevolution.com" onClick="navigator.app.loadUrl(this.href, { openExternal:true }); return false;">Brad Wood</a></h4>
 			</div>
 		</div>
 	
@@ -70,7 +70,7 @@
 				Content here
 			</div>
 			<div data-role="footer" data-position="fixed">
-				<h4>By <a href="http://www.codersrevolution.com" target="_new">Brad Wood</a></h4>
+				<h4>By <a href="http://www.codersrevolution.com" onClick="navigator.app.loadUrl(this.href, { openExternal:true }); return false;">Brad Wood</a></h4>
 			</div>
 		</div>
 	
@@ -94,7 +94,7 @@
 				If you're an Android user (and obviously smart),  you can get here by pressing your device's "menu" button.
 			</div>		
 			<div data-role="footer" data-position="fixed">
-				<h4>By <a href="http://www.codersrevolution.com" target="_new">Brad Wood</a></h4>
+				<h4>By <a href="http://www.codersrevolution.com" onClick="navigator.app.loadUrl(this.href, { openExternal:true }); return false;">Brad Wood</a></h4>
 			</div>
 		</div>
 
@@ -116,33 +116,41 @@
 			
 			// Display the connection type
 			function loadConnectionDetails() {
-				$("##connectionType").text( cfclient.connection.getType() );				
+				var connType = cfclient.connection.getType();
+				$("##connectionType").text( connType );
+				
+				if( connType == Connection.NONE || connType == Connection.UNKNOWN  ) {
+					$("##connectionOnlineStatus").text( 'Offline' );
+					$("##connectionOnlineStatus").css("color","red");					
+				} else {
+					$("##connectionOnlineStatus").text( 'Online' );
+					$("##connectionOnlineStatus").css("color","green");					
+				}
 			}
 			
 			// I'm fired every time the device goes offline
 			function onConnectionOffline() {
 				console.log( 'Device offline' );
 				loadConnectionDetails();
-				$("##connectionOnlineStatus").text( 'Offline' );
-				$("##connectionOnlineStatus").css("color","red");
 			}
 			
 			// I'm fired every time the device goes online
 			function onConnectionOnline() {
 				console.log( 'Device online' );
 				loadConnectionDetails();
-				$("##connectionOnlineStatus").text( 'Online' );
-				$("##connectionOnlineStatus").css("color","green");
 			}
 			
 			// Bind the functions to call when the devices connection state changes.
 			cfclient.connection.onOffline( 'onConnectionOffline' );
 			cfclient.connection.onOnline( 'onConnectionOnline' );
 			
+			// Kick off on load
+			loadConnectionDetails();
+			
+			
 			
 			//Events Client API
-			
-			
+						
 			// Android user presses "menu" button
 			function onEventMenu() {
 				$("body").pagecontainer("change", "##settings" );
