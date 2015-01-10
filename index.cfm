@@ -71,15 +71,15 @@
 				
 				Press these buttons and consider yourself notified.<br>
 				
-				<button id="btnAlert" data-icon="alert" onClick="notifyAlert();">Alert</button>
-				<button id="btnBeep" data-icon="alert" onClick="notifyBeep();">Beep</button>
-				<button id="btnConfirm" data-icon="alert" onClick="notifyConfirm();">Confirm</button>
-				<button id="btnVibrate" data-icon="alert" onClick="notifyVibrate();">Vibrate</button>
+				<button data-icon="alert" onClick="notifyAlert();">Alert</button>
+				<button data-icon="alert" onClick="notifyBeep();">Beep</button>
+				<button data-icon="alert" onClick="notifyConfirm();">Confirm</button>
+				<button data-icon="alert" onClick="notifyVibrate();">Vibrate</button>
 				<br>
-				For comparison, here are some native controls from the WebKit browser.	<br>
+				For comparison, here are some native controls from the WebKit browser.<br>
 				<br>
-				<button id="btnBrowserAlert" data-icon="info" data-inline="true" onClick="alert( 'Stop poking me' );">Browser Alert</button>				
-				<button id="btnBrowserConfirm" data-icon="info" data-inline="true" onClick="confirm( 'You know this is inevitable, right?' );">Browser Confirm</button>
+				<button data-icon="info" data-inline="true" onClick="alert( 'Stop poking me' );">Browser Alert</button>				
+				<button data-icon="info" data-inline="true" onClick="confirm( 'You know this is inevitable, right?' );">Browser Confirm</button>
 				
 			</div>
 			<div data-role="footer" data-position="fixed">
@@ -103,6 +103,38 @@
 				
 				<ul id="contactList" data-role="listview" data-autodividers="true"></ul>
 								
+			</div>
+			<div data-role="footer" data-position="fixed">
+				<h4>By <a href="http://www.codersrevolution.com" onClick="navigator.app.loadUrl(this.href, { openExternal:true }); return false;">Brad Wood</a></h4>
+			</div>
+		</div>
+	
+		<div data-role="page" id="contactDetail">	
+			<div data-role="header" data-add-back-btn="true" data-position="fixed">
+				<h1>
+					<span style="position:relative">
+						CFClient Sampler
+					</span>
+				</h1>
+			</div>		
+			<div data-role="content">	
+				<h2>Contact Details</h2>
+				
+				<div data-role="fieldcontain">
+					<label for="contactDetailName">Name:</label>
+					<input type="text" id="contactDetailName" value="">
+				</div>
+				<div data-role="fieldcontain">
+					<label for="contactDetailNumber">Number:</label>
+					<input type="text" id="contactDetailNumber" value="">
+				</div>
+				<div data-role="fieldcontain">
+					<label for="contactDetailEmail">E-mail:</label>
+					<input type="text" id="contactDetailEmail" value="">
+				</div>
+				<br>
+				<a data-icon="back" data-rel="back" data-role="button" href="#contact">Done</a>
+
 			</div>
 			<div data-role="footer" data-position="fixed">
 				<h4>By <a href="http://www.codersrevolution.com" onClick="navigator.app.loadUrl(this.href, { openExternal:true }); return false;">Brad Wood</a></h4>
@@ -286,6 +318,8 @@ Invalid construct: Either argument or name is missing., error on line: (144 now)
 				}
 			});
 			
+			// Search for contacts. Loads all by default
+			// TODO: Pagination?
 			function loadContacts( searchString ) {
 				// Default search string
 				if( typeof( searchString ) == 'undefined' ) { searchString = ''; }
@@ -320,9 +354,9 @@ Invalid construct: Either argument or name is missing., error on line: (144 now)
 				});
 								
 				// Loop over and display
-				contacts.each( function( contact, index ) {
+				contacts.each( function( contact, index ) { 
 					contactListEL.append( 
-						'<li>' + contact.displayName + '</li>'
+						'<li><a href="##contactDetail" onClick="editContact( ' + contact.id + ' )">' + contact.displayName + '</a></li>'
 					);					 
 				} );
 				
@@ -331,10 +365,59 @@ Invalid construct: Either argument or name is missing., error on line: (144 now)
 				
 				// Hide the loader 
 				$.mobile.loading('hide');
+				haveContactsBeenLoaded = true;
 					
 			}
 			
 			
+			// Edit a contact
+			function editContact( id ) {
+				// Show waitscreen
+				$.mobile.loading( "show", { text: "Loading...", textVisible: true } );
+				
+				// Grab form elements
+				var contactDetailNameEL = $( '##contactDetailName' );
+				var contactDetailNumberEL = $( '##contactDetailNumber' );
+				var contactDetailEmailEL = $( '##contactDetailEmail' );
+				
+				// Wipe out any previous values
+				contactDetailNameEL.val( '' );
+				contactDetailNumberEL.val( '' );
+				contactDetailEmailEL.val( '' );
+				
+				// Get the contact
+				var contacts = cfclient.contacts.find( id, [ 'id' ] );
+				
+				// Double check we found one.
+				if( !contacts.length > 0 ) {
+					alert( "Couldn't find user ID " + id );
+					$.mobile.loading('hide');
+					$.mobile.back();
+					return;					
+				}
+				
+				// Grab first result-- hopefully there's only one.
+				var contact = contacts[ 1 ];
+				console.log( contact );
+								
+				// Show name
+				if( contact.displayName ) {
+					contactDetailNameEL.val( contact.displayName );
+				}
+				
+				// Show first number
+				if( contact.phoneNumbers && contact.phoneNumbers.length > 0 ) {
+					contactDetailNumberEL.val( contact.phoneNumbers[ 1 ].value );	
+				}
+				
+				// Show first E-mail
+				if( contact.emails && contact.emails.length > 0 ) {
+					contactDetailEmailEL.val( contact.emails[ 1 ].value );	
+				}
+				
+				// Hide the loader 
+				$.mobile.loading('hide');
+			}
 			
 		} catch( any e ) {
 			console.log( e );
