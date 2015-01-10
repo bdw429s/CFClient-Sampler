@@ -13,7 +13,7 @@
 	<body>		
 
 		<div data-role="page" id="home">
-			<div data-role="header">
+			<div data-role="header" data-position="fixed">
 				<h1>
 					<span style="position:relative">
 						CFClient Sampler						
@@ -26,6 +26,7 @@
 				<ul data-role="listview">
 					<li><a href="#connection">Connection API</a></li>
 					<li><a href="#notification">Notification API</a></li>
+					<li><a href="#contact">Contact API</a></li>
 				</ul>					
 				<p>
 			</div>			
@@ -35,7 +36,7 @@
 		</div>
 	
 		<div data-role="page" id="connection">
-			<div data-role="header" data-add-back-btn="true">
+			<div data-role="header" data-add-back-btn="true" data-position="fixed">
 				<h1>
 					<span style="position:relative">
 						CFClient Sampler					
@@ -58,7 +59,7 @@
 		</div>
 	
 		<div data-role="page" id="notification">	
-			<div data-role="header" data-add-back-btn="true">
+			<div data-role="header" data-add-back-btn="true" data-position="fixed"	>
 				<h1>
 					<span style="position:relative">
 						CFClient Sampler				
@@ -67,7 +68,41 @@
 			</div>		
 			<div data-role="content">	
 				<h2>Notification API</h2>
-				Content here
+				
+				Press these buttons and consider yourself notified.<br>
+				
+				<button id="btnAlert" data-icon="alert" onClick="notifyAlert();">Alert</button>
+				<button id="btnBeep" data-icon="alert" onClick="notifyBeep();">Beep</button>
+				<button id="btnConfirm" data-icon="alert" onClick="notifyConfirm();">Confirm</button>
+				<button id="btnVibrate" data-icon="alert" onClick="notifyVibrate();">Vibrate</button>
+				<br>
+				For comparison, here are some native controls from the WebKit browser.	<br>
+				<br>
+				<button id="btnBrowserAlert" data-icon="info" data-inline="true" onClick="alert( 'Stop poking me' );">Browser Alert</button>				
+				<button id="btnBrowserConfirm" data-icon="info" data-inline="true" onClick="confirm( 'You know this is inevitable, right?' );">Browser Confirm</button>
+				
+			</div>
+			<div data-role="footer" data-position="fixed">
+				<h4>By <a href="http://www.codersrevolution.com" onClick="navigator.app.loadUrl(this.href, { openExternal:true }); return false;">Brad Wood</a></h4>
+			</div>
+		</div>
+	
+		<div data-role="page" id="contact">	
+			<div data-role="header" data-add-back-btn="true" data-position="fixed">
+				<h1>
+					<span style="position:relative">
+						CFClient Sampler				
+					</span>
+				</h1>
+			</div>		
+			<div data-role="content">	
+				<h2>Contact API</h2>
+				
+				<input type="search" id="contactSerachBox" data-mini="true" onChange="loadContacts( this.value );">
+				Only 200 contacts shown at a time.<br><br><br>
+				
+				<ul id="contactList" data-role="listview" data-autodividers="true"></ul>
+								
 			</div>
 			<div data-role="footer" data-position="fixed">
 				<h4>By <a href="http://www.codersrevolution.com" onClick="navigator.app.loadUrl(this.href, { openExternal:true }); return false;">Brad Wood</a></h4>
@@ -75,7 +110,7 @@
 		</div>
 	
 		<div data-role="page" id="settings">		
-			<div data-role="header" data-add-back-btn="true">
+			<div data-role="header" data-add-back-btn="true" data-position="fixed">
 				<h1>
 					<span style="position:relative">
 						Settings					
@@ -101,13 +136,45 @@
 	</body>
 </html>
 		
+<!--- cfclient can't handle the syntax below.  It apparenlty 
+tries to parse it as CFML though I don't even see why that would be an issue. 
+Invalid construct: Either argument or name is missing., error on line: (144 now) column: 59
+--->
+<script language="javascript">
+			   
+	// When a page is shown, call its onPageLoad().
+	// I created this convention for my personal 
+	$(document).on("pagecontainershow", function(e, ui) {
+		var page = $('body').pagecontainer('getActivePage');
+		var pageID = page.prop('id');
+	    console.log( 'Showing page ' + pageID + '.' );
+	    
+	    if( page.data( 'onPageLoad' ) ) {
+			page.data( 'onPageLoad' )();
+		}
+	});
+	
+</script>
+		
 <cfclientsettings enabledeviceapi="true">
-
+			
 <cfclient>
 		
 	<cfscript>
 		try {
-			// Connection Client API
+						
+			$(document).on('pageinit', function(){
+				
+				$( "body" ).loader({
+				  defaults: true
+				});
+			 
+			});
+			
+			
+			/************************
+			* Connection Client API
+			************************/
 			
 			// When user clicks the manual refresh button
 			$(document).on("click","##btnRefreshConnection", function(){
@@ -149,7 +216,9 @@
 			
 			
 			
-			//Events Client API
+			/************************
+			* Events Client API
+			************************/
 						
 			// Android user presses "menu" button
 			function onEventMenu() {
@@ -164,6 +233,108 @@
 			cfclient.events.onMenuButton( 'onEventMenu' );
 			cfclient.events.onBatteryLow( 'onBatteryLow' );
 			cfclient.events.onBatteryCritical( 'onBatteryLow' );
+			
+			
+			/************************
+			* Notification Client API
+			************************/
+			
+			 
+			function notifyAlert() {
+				cfclient.notification.alert( "The British are coming!", "Don't just stand there!'", "Got it" );
+			}
+			
+			function notifyBeep() {
+				cfclient.notification.beep( 1 );
+			}
+			
+			function notifyConfirm() {
+				// Limit 3 options.
+				// Returns 1, 2, or 3 depending on answer
+				// Returns 0 if no answer (back button on Android will bypass)
+				var result = cfclient.notification.confirm( "Do you feel lucky?", "Talk to me", [ 'Um, yea', 'Wut?', 'No' ] );
+				console.log( result );
+				
+				// Give humorous feedback
+				if( result == 1 ) {
+					alert( 'Good! Here, kiss my chips' );
+				} else if( result == 2 ) {
+					alert( 'You heard me...' );					
+				} else if( result == 3 ) {
+					alert( 'Stay away from the lottery today.' );					
+				} else {
+					alert( 'WHY U NO ANSWER?' );					
+				}
+			}
+			
+			function notifyVibrate() {
+				cfclient.notification.vibrate( 1000 );
+			}
+			
+			
+			/************************
+			* Contact Client API
+			************************/
+			
+			// Use this to load the first time the page is shown
+			haveContactsBeenLoaded = false;
+			
+			$( '##contact' ).data( 'onPageLoad', function() {
+				// First run
+				if( !haveContactsBeenLoaded ) {
+					loadContacts();
+				}
+			});
+			
+			function loadContacts( searchString ) {
+				// Default search string
+				if( typeof( searchString ) == 'undefined' ) { searchString = ''; }
+				
+				console.log( 'Searching for contacts matching "' + searchString + '".' );
+				
+				// Show waitscreen
+				$.mobile.loading( "show", { text: "Hold on a sec while we fetch your contacts", textVisible: true } );
+				
+				// Clear previous results
+				var contactListEL = $( '##contactList' );
+				contactListEL.html( '' );
+				contactListEL.listview("refresh");
+				
+				// Actually search for the contacts
+				var contacts = cfclient.contacts.find( searchString, [ 'displayName' ] );
+				
+				// I have a lot of E-mail-only contacts w/no name. Ignore them
+				contacts = contacts.filter( function( element ) {
+					return element.displayName != null;
+				});
+				
+				// Grab the first 200 just to limit how much junk we show. 
+				// Doing this before the sort just so we get a smattering of alphanetical representation
+				if( contacts.length > 200 ) {
+					contacts = contacts.splice( 0, 200 );					
+				}
+								
+				// Sort by name
+				contacts.sort( function( a, b ) {
+					return ( a.displayName.toLowerCase() > b.displayName.toLowerCase() ) ? 1 : ( ( b.displayName.toLowerCase() > a.displayName.toLowerCase() ) ? -1 : 0  );
+				});
+								
+				// Loop over and display
+				contacts.each( function( contact, index ) {
+					contactListEL.append( 
+						'<li>' + contact.displayName + '</li>'
+					);					 
+				} );
+				
+				// Refresh the UI element
+				contactListEL.listview("refresh");
+				
+				// Hide the loader 
+				$.mobile.loading('hide');
+					
+			}
+			
+			
 			
 		} catch( any e ) {
 			console.log( e );
