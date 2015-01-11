@@ -14,6 +14,7 @@ Follow the blog posts as I create this app here:
 * http://www.codersrevolution.com/blog/my-first-forray-into-cfclient
 * http://www.codersrevolution.com/blog/my-cfclient-proof-of-concept-and-gapdebug
 * http://www.codersrevolution.com/blog/cfclient-the-agony-the-ecstasy-making-it-purty
+* http://www.codersrevolution.com/blog/cfclient-we-have-contact-lets-notify
 
 ## Try it at home
 You can checkout the code on your own local ColdFusion Builder installation which will need to have your local ColdFusion 11 server set up.  I have included my .project file, but certain data such as the Phonegap features that are added do not seem to store in the web root, so you will need to configure that yourself for the app to work once compiled.  
