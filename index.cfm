@@ -16,7 +16,7 @@
 			<div data-role="header" data-position="fixed">
 				<h1>
 					<span style="position:relative">
-						CFClient Sampler						
+						CFClient Sampler
 					</span>
 				</h1>
 				<a href="#settings" data-icon="gear" class="ui-btn-right">Settings</a>
@@ -31,7 +31,7 @@
 				<p>
 			</div>			
 			<div data-role="footer" data-position="fixed">
-				<h4>By <a href="http://www.codersrevolution.com" onClick="navigator.app.loadUrl(this.href, { openExternal:true }); return false;">Brad Wood</a></h4>
+				<h4>By <a href="http://www.codersrevolution.com" onClick="window.open( this.href, '_system' ); return false;">Brad Wood</a></h4>
 			</div>
 		</div>
 	
@@ -54,7 +54,7 @@
 				</div>						
 			</div>
 			<div data-role="footer" data-position="fixed">
-				<h4>By <a href="http://www.codersrevolution.com" onClick="navigator.app.loadUrl(this.href, { openExternal:true }); return false;">Brad Wood</a></h4>
+				<h4>By <a href="http://www.codersrevolution.com" onClick="window.open( this.href, '_system' ); return false;">Brad Wood</a></h4>
 			</div>
 		</div>
 	
@@ -83,7 +83,7 @@
 				
 			</div>
 			<div data-role="footer" data-position="fixed">
-				<h4>By <a href="http://www.codersrevolution.com" onClick="navigator.app.loadUrl(this.href, { openExternal:true }); return false;">Brad Wood</a></h4>
+				<h4>By <a href="http://www.codersrevolution.com" onClick="window.open( this.href, '_system' ); return false;">Brad Wood</a></h4>
 			</div>
 		</div>
 	
@@ -105,7 +105,7 @@
 								
 			</div>
 			<div data-role="footer" data-position="fixed">
-				<h4>By <a href="http://www.codersrevolution.com" onClick="navigator.app.loadUrl(this.href, { openExternal:true }); return false;">Brad Wood</a></h4>
+				<h4>By <a href="http://www.codersrevolution.com" onClick="window.open( this.href, '_system' ); return false;">Brad Wood</a></h4>
 			</div>
 		</div>
 	
@@ -137,7 +137,7 @@
 
 			</div>
 			<div data-role="footer" data-position="fixed">
-				<h4>By <a href="http://www.codersrevolution.com" onClick="navigator.app.loadUrl(this.href, { openExternal:true }); return false;">Brad Wood</a></h4>
+				<h4>By <a href="http://www.codersrevolution.com" onClick="window.open( this.href, '_system' ); return false;">Brad Wood</a></h4>
 			</div>
 		</div>
 	
@@ -161,7 +161,7 @@
 				If you're an Android user (and obviously smart),  you can get here by pressing your device's "menu" button.
 			</div>		
 			<div data-role="footer" data-position="fixed">
-				<h4>By <a href="http://www.codersrevolution.com" onClick="navigator.app.loadUrl(this.href, { openExternal:true }); return false;">Brad Wood</a></h4>
+				<h4>By <a href="http://www.codersrevolution.com" onClick="window.open( this.href, '_system' ); return false;">Brad Wood</a></h4>
 			</div>
 		</div>
 
@@ -265,6 +265,16 @@ Invalid construct: Either argument or name is missing., error on line: (144 now)
 			cfclient.events.onMenuButton( 'onEventMenu' );
 			cfclient.events.onBatteryLow( 'onBatteryLow' );
 			cfclient.events.onBatteryCritical( 'onBatteryLow' );
+			
+			// On Android, fires when I lock my phone
+			cfclient.events.onPause( function() {
+				console.log( 'paused' );
+			} );
+			
+			// On Android, fires when I unlock my phone
+			cfclient.events.onResume( function() {
+				console.log( 'resumed' );
+			} );
 			
 			
 			/************************
