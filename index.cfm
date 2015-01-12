@@ -597,6 +597,12 @@ Invalid construct: Either argument or name is missing., error on line: (144 now)
 				stopAccelerometer();
 			});
 			
+			
+			
+			/************************
+			* Roll The Ball Game
+			************************/
+			
 			playAreaHeight = $(window).height()*.6;
 			playAreaWidth = $(window).width()*.9;
 			
@@ -657,7 +663,7 @@ Invalid construct: Either argument or name is missing., error on line: (144 now)
 				
 			};
 						
-			// Place the ball in the middle						
+			// Place the ball in the middle	to start the game.
 		 	ballPos.place( { x: playAreaWidth/2, y: playAreaHeight/2 } );
 		 	         
 		 	function animateBallGame( data ) {
@@ -674,12 +680,12 @@ Invalid construct: Either argument or name is missing., error on line: (144 now)
 				cfclient.accelerometer.clearWatch( ballGameWatchId );				
 			}
 
-			// When the Accelerometer page is loaded, start tracking
+			// When the Roll The Ball page is loaded, start tracking
 			$( '##rollTheBall' ).data( 'onPageLoad', function() {
 				startBallGame();
 			});
 			
-			// When the Accelerometer page is left, stop tracking
+			// When the Roll The Ball page is left, stop tracking
 			$( '##rollTheBall' ).data( 'onPageUnLoad', function() {
 				stopBallGame();
 			});
