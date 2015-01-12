@@ -27,6 +27,8 @@
 					<li><a href="#connection">Connection API</a></li>
 					<li><a href="#notification">Notification API</a></li>
 					<li><a href="#contact">Contact API</a></li>
+					<li><a href="#accelerometer">Accelerometer API</a></li>
+					<li><a href="#rollTheBall">"Roll The Ball" Game</a></li>					
 				</ul>					
 				<p>
 			</div>			
@@ -48,6 +50,9 @@
 				<div style="text-align:center;">
 					<h3 id="connectionOnlineStatus"></h3>
 					Your internet connection is: <span style="font-weight: bold;" id="connectionType"></span>
+					<br>
+					<br>
+					Try turning Wifi on and off, or putting your device in airplane mode.   This screen will automatically update to show your connection type.
 					<br>
 					<br>
 					<button id="btnRefreshConnection" data-icon="refresh" data-inline="true">Manual Refresh</button>	
@@ -74,7 +79,7 @@
 				<button data-icon="alert" onClick="notifyAlert();">Alert</button>
 				<button data-icon="alert" onClick="notifyBeep();">Beep</button>
 				<button data-icon="alert" onClick="notifyConfirm();">Confirm</button>
-				<button data-icon="alert" onClick="notifyVibrate();">Vibrate</button>
+				<button data-icon="alert" onClick="notifyVibrate(1000);">Vibrate</button>
 				<br>
 				For comparison, here are some native controls from the WebKit browser.<br>
 				<br>
@@ -141,6 +146,79 @@
 			</div>
 		</div>
 	
+	
+		<div data-role="page" id="accelerometer">	
+			<div data-role="header" data-add-back-btn="true" data-position="fixed">
+				<h1>
+					<span style="position:relative">
+						CFClient Sampler
+					</span>
+				</h1>
+			</div>		
+			<div data-role="content">	
+				<h2>Accelerometer</h2>
+				
+				Shake your phone different directions to see the X Y and Z axis lighting up when they detect acceleration.  
+				Blue is a positive measurement, red is negative. 
+				Any sufficiently hard "shake" will register both in succession as your device speeds up, and then slows down against its inertia.
+				
+				<label for="sensitivity">Sensitivity:</label>
+				<input type="range" name="sensitivity" id="sensitivity" value="15" min="0" max="20"  data-highlight="true">
+								
+				<style>
+					.XYZBox {
+						display: inline-block;
+						height: 100px;
+						width: 30%;
+						border-style: solid;
+						text-align: center;
+						line-height: 100px;
+						font-size: 40pt
+					}					
+				</style>
+				
+				<div id="XBox" class="XYZBox">X</div>
+				<div id="YBox" class="XYZBox">Y</div>
+				<div id="ZBox" class="XYZBox">Z</div>
+				<br>
+
+			</div>
+			<div data-role="footer" data-position="fixed">
+				<h4>By <a href="http://www.codersrevolution.com" onClick="window.open( this.href, '_system' ); return false;">Brad Wood</a></h4>
+			</div>
+		</div>
+	
+		<div data-role="page" id="rollTheBall">	
+			<div data-role="header" data-add-back-btn="true" data-position="fixed">
+				<h1>
+					<span style="position:relative">
+						CFClient Sampler
+					</span>
+				</h1>
+			</div>		
+			<div data-role="content">	
+				<h2>Roll The Ball</h2>
+				
+				Hold your phone flat and tilt the screen to "roll" the digital ball around inside its square.<br>
+				Don't let the ball touch the sides.  We've rigged your device with 10,000 volts of electricity! 
+				<br>
+				
+				<style>
+					#rollTheBallContainer {
+						border-style: solid;
+						position:relative;
+						background-color:white;
+					}					
+				</style>
+				
+				<div id="rollTheBallContainer"><img src="images/ball.jpg" id="theBall" style="position:absolute;" height="64" width="64"></div>
+				
+			</div>
+			<div data-role="footer" data-position="fixed">
+				<h4>By <a href="http://www.codersrevolution.com" onClick="window.open( this.href, '_system' ); return false;">Brad Wood</a></h4>
+			</div>
+		</div>
+	
 		<div data-role="page" id="settings">		
 			<div data-role="header" data-add-back-btn="true" data-position="fixed">
 				<h1>
@@ -180,7 +258,16 @@ Invalid construct: Either argument or name is missing., error on line: (144 now)
 		var page = $('body').pagecontainer('getActivePage');
 		var pageID = page.prop('id');
 	    console.log( 'Showing page ' + pageID + '.' );
-	    
+	    // If we came from another page, see if it needs unloaded first
+	    if( ui.prevPage && ui.prevPage.length ) {
+			var prevPage = $( ui.prevPage[0] );
+		    
+		    if( prevPage.data( 'onPageUnLoad' ) ) {
+		    	console.log( 'Unloading page' + prevPage.prop('id') );
+				prevPage.data( 'onPageUnLoad' )();
+			}
+		}
+		
 	    if( page.data( 'onPageLoad' ) ) {
 			page.data( 'onPageLoad' )();
 		}
@@ -309,8 +396,8 @@ Invalid construct: Either argument or name is missing., error on line: (144 now)
 				}
 			}
 			
-			function notifyVibrate() {
-				cfclient.notification.vibrate( 1000 );
+			function notifyVibrate(duration) {
+				cfclient.notification.vibrate( duration );
 			}
 			
 			
@@ -429,6 +516,174 @@ Invalid construct: Either argument or name is missing., error on line: (144 now)
 				$.mobile.loading('hide');
 			}
 			
+			
+			/************************
+			* Accelerometer Client API
+			************************/
+			
+			// For calculating deltas
+			prevAccelerometerData = null;
+			
+			XBoxEL = $( '##XBox' );
+			YBoxEL = $( '##YBox' );
+			ZBoxEL = $( '##ZBox' );
+			
+			
+			function onAccelerometer( data ) {
+				var sensitivity = 20-$( '##sensitivity' ).val();
+				
+				if( prevAccelerometerData != null ) {
+
+					// Calculate the deltas but only keep them if they're above the threshold
+					var deltaX = ( abs( prevAccelerometerData.x - data.x ) > sensitivity ? prevAccelerometerData.x - data.x : 0 );
+					var deltaY = ( abs( prevAccelerometerData.y - data.y ) > sensitivity ? prevAccelerometerData.y - data.y : 0 );
+					var deltaZ = ( abs( prevAccelerometerData.z - data.z ) > sensitivity ? prevAccelerometerData.z - data.z : 0 );
+
+					// Set the color of each box based on it's change in acceleration
+					XBoxEL.css( 'background-color', getXYZColor( deltaX ) );
+					YBoxEL.css( 'background-color', getXYZColor( deltaY ) );
+					ZBoxEL.css( 'background-color', getXYZColor( deltaZ ) );
+			
+				}
+				
+				// Save this for next time
+				prevAccelerometerData = data;
+			}
+
+			// Turn a positive number blue and negative red.
+			// Blue gets bluer the higher the number, and red gets redder the lower the number
+			// Upper and lower bounds are -20 and 20. 
+			function getXYZColor( delta ) {
+				// How dark -- an decimal betwen 0 and 255
+				var darkness = 255 - int( Math.min( 255 * ( abs( delta ) / 20 ), 255 ) );
+				//Convert to hex and pad if neccessary
+				var darknessHex = darkness.toString(16);
+				darknessHex = ( darknessHex.length==1 ? '0' + darknessHex : darknessHex );
+				
+				if(delta > 0) {
+					// Blue stays FF, red and green are adjusted up and down accordingly 
+					return '##' + darknessHex + darknessHex +'FF';
+				} else if(delta < 0) {
+					// Red stays FF, green and blue are adjusted up and down accordingly
+					return '##FF' + darknessHex + darknessHex;
+				} else {
+					return 'white';
+				}
+			}
+						
+			// Set polling interval
+			opt = cfclient.accelerometer.getOptions();
+			opt.frequency = 200;
+			cfclient.accelerometer.setOptions( opt );
+			
+			function startAccelerometer() {
+				console.log('start watching accelerometer');
+				accelerometerWatchId = cfclient.accelerometer.watch( onAccelerometer );
+			}
+			
+			function stopAccelerometer() {
+				console.log('stop watching accelerometer');
+				cfclient.accelerometer.clearWatch( accelerometerWatchId );				
+			}
+
+			// When the Accelerometer page is loaded, start tracking
+			$( '##accelerometer' ).data( 'onPageLoad', function() {
+				// Don't put cfclient code in here, or "cff_callback27 is not defined"
+				startAccelerometer();
+			});
+			
+			// When the Accelerometer page is left, stop tracking
+			$( '##accelerometer' ).data( 'onPageUnLoad', function() {
+				stopAccelerometer();
+			});
+			
+			playAreaHeight = $(window).height()*.6;
+			playAreaWidth = $(window).width()*.9;
+			
+			// Size the playing area						
+			$( '##rollTheBallContainer' ).height( playAreaHeight+'px' );
+			$( '##rollTheBallContainer' ).width( playAreaWidth+'px' );
+			
+			ballHeight = $( '##theBall' ).height();
+			ballWidth = $( '##theBall' ).width();
+			
+			ballPos = {
+				// x,y represents the center of the ball
+				x: 0,
+				y: 0,
+				
+				// The ball can only approach half of its width to the edge before it will hit.
+				leftLimit: ballWidth/2,
+				rightLimit: playAreaWidth-( ballWidth/2 ),
+				topLimit: ballHeight/2,
+				bottomLimit: playAreaHeight-( ballHeight/2 ),
+				
+				// This will roll the ball in the amount specified in the x,y tuple
+				roll: function( rollOffset ) {
+					ballPos.x=ballPos.x+rollOffset.x;
+					ballPos.y=ballPos.y-rollOffset.y;
+									
+					// Haptic feedback what the ball reached the edge
+					if( ballPos.x > ballPos.rightLimit
+					|| ballPos.x < ballPos.leftLimit
+					|| ballPos.y > ballPos.bottomLimit
+					|| ballPos.y < ballPos.topLimit ) {
+						notifyVibrate( 50 );	
+					}
+										
+					ballPos.keepInBounds();
+					
+					ballPos.moveBall();
+				},
+				// This will set the ball down on the specified coords realtive to the top left corner.
+				place: function( coords ) {
+					ballPos.x=coords.x;
+					ballPos.y=coords.y;
+										
+					ballPos.keepInBounds();
+										
+					ballPos.moveBall();
+				},
+				// Keep the ball within bounds
+				keepInBounds: function() {
+					ballPos.x=Math.min( ballPos.x, ballPos.rightLimit );
+					ballPos.x=Math.max( ballPos.x, ballPos.leftLimit );					
+					ballPos.y=Math.min( ballPos.y, ballPos.bottomLimit );
+					ballPos.y=Math.max( ballPos.y, ballPos.topLimit );
+				},
+				moveBall: function() {
+				 	$( '##theBall' ).css({ 'left': ballPos.x-(ballWidth/2) + 'px', 'top': ballPos.y-(ballHeight/2) + 'px' });
+				}
+				
+			};
+						
+			// Place the ball in the middle						
+		 	ballPos.place( { x: playAreaWidth/2, y: playAreaHeight/2 } );
+		 	         
+		 	function animateBallGame( data ) {
+		 		ballPos.roll( { x:  -int( data.x )*5, y: -int( data.y )*5 } );
+		 	}
+		 	
+			function startBallGame() {
+				console.log('start watching accelerometer for Roll The Ball');
+				ballGameWatchId = cfclient.accelerometer.watch( animateBallGame );
+			}
+			
+			function stopBallGame() {
+				console.log('stop watching accelerometer for Roll The Ball');
+				cfclient.accelerometer.clearWatch( ballGameWatchId );				
+			}
+
+			// When the Accelerometer page is loaded, start tracking
+			$( '##rollTheBall' ).data( 'onPageLoad', function() {
+				startBallGame();
+			});
+			
+			// When the Accelerometer page is left, stop tracking
+			$( '##rollTheBall' ).data( 'onPageUnLoad', function() {
+				stopBallGame();
+			});
+
 		} catch( any e ) {
 			console.log( e );
 		}
