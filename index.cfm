@@ -161,10 +161,7 @@
 				Shake your phone different directions to see the X Y and Z axis lighting up when they detect acceleration.  
 				Blue is a positive measurement, red is negative. 
 				Any sufficiently hard "shake" will register both in succession as your device speeds up, and then slows down against its inertia.
-				
-				<label for="sensitivity">Sensitivity:</label>
-				<input type="range" name="sensitivity" id="sensitivity" value="15" min="0" max="20"  data-highlight="true">
-								
+				<br><br>
 				<style>
 					.XYZBox {
 						display: inline-block;
@@ -172,8 +169,14 @@
 						width: 30%;
 						border-style: solid;
 						text-align: center;
-						line-height: 100px;
+						line-height: 60px;
 						font-size: 40pt
+					}	
+					.XYZValue {
+						display: inline-block;
+						width: 30%;
+						text-align: center;
+						font-size: 8pt
 					}					
 				</style>
 				
@@ -181,6 +184,22 @@
 				<div id="YBox" class="XYZBox">Y</div>
 				<div id="ZBox" class="XYZBox">Z</div>
 				<br>
+				<div id="XValue" class="XYZValue"></div>
+				<div id="YValue" class="XYZValue"></div>
+				<div id="ZValue" class="XYZValue"></div>
+				<br>
+				<br>
+				Try adjusting the sensitivity. This is configured as a "noise gate" to weed out minor movements.  
+				<br>
+				<br>
+				<label for="sensitivity">Sensitivity:</label>
+				<input type="range" name="sensitivity" id="sensitivity" value="15" min="0" max="20"  data-highlight="true">
+				<br>
+				But most importantly, shake your thing.  
+				That's it... harder<br>
+				HARDER!<br>
+				<br>
+				Now, look around.  You probably are getting some strange looks.
 
 			</div>
 			<div data-role="footer" data-position="fixed">
@@ -251,9 +270,9 @@ tries to parse it as CFML though I don't even see why that would be an issue.
 Invalid construct: Either argument or name is missing., error on line: (144 now) column: 59
 --->
 <script language="javascript">
-			   
-	// When a page is shown, call its onPageLoad().
-	// I created this convention for my personal 
+				   
+	// When a page is shown, call its onPageLoad() and call the previous page's onPageUnload().
+	// I created these conventions for my personal convenience
 	$(document).on("pagecontainershow", function(e, ui) {
 		var page = $('body').pagecontainer('getActivePage');
 		var pageID = page.prop('id');
@@ -527,6 +546,9 @@ Invalid construct: Either argument or name is missing., error on line: (144 now)
 			XBoxEL = $( '##XBox' );
 			YBoxEL = $( '##YBox' );
 			ZBoxEL = $( '##ZBox' );
+			XValEL = $( '##XValue' );
+			YValEL = $( '##YValue' );
+			ZValEL = $( '##ZValue' );
 			
 			
 			function onAccelerometer( data ) {
@@ -538,6 +560,11 @@ Invalid construct: Either argument or name is missing., error on line: (144 now)
 					var deltaX = ( abs( prevAccelerometerData.x - data.x ) > sensitivity ? prevAccelerometerData.x - data.x : 0 );
 					var deltaY = ( abs( prevAccelerometerData.y - data.y ) > sensitivity ? prevAccelerometerData.y - data.y : 0 );
 					var deltaZ = ( abs( prevAccelerometerData.z - data.z ) > sensitivity ? prevAccelerometerData.z - data.z : 0 );
+
+					// Show the raw numbers
+					XValEL.text( parseFloat( data.x ).toFixed( 2 ) );
+					YValEL.text( parseFloat( data.y ).toFixed( 2 ) );
+					ZValEL.text( parseFloat( data.z ).toFixed( 2 ) );
 
 					// Set the color of each box based on it's change in acceleration
 					XBoxEL.css( 'background-color', getXYZColor( deltaX ) );
