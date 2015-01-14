@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<widget  xmlns="http://www.w3.org/ns/widgets"  xmlns:gap="http://phonegap.com/ns/1.0"  id="CFClient-Sampler"  version="1.0.0"  versionCode="10"   > 
+	<name>CFClient Sampler</name>
+	<description>A Sampler app showcasing what can be build with ColdFusion 11 and CFClient</description>
+	<author email="brad@bradwood.com" href="http://www.codersrevolution.com" >Brad Wood</author>
+	<icon src="images/icon.png" />
+	<preference  name="phonegap-version"  value= "3.3.0"  />
+	<preference  name="orientation"  value= "portrait"  />
+	<preference  name="target-device"  value= "universal"  />
+	<preference  name="fullscreen"  value= "false"  />
+	<preference  name="webviewbounce"  value= "true"  />
+	<preference  name="android-installLocation"  value= "internalOnly"  />
+	<preference  name="splash-screen-duration"  value= "5000"  />
+	<preference  name="load-url-timeout"  value= "20000"  />
+	<feature  name="http://api.phonegap.com/1.0/file"  />
+	<feature  name="http://api.phonegap.com/1.0/battery"  />
+	<feature  name="http://api.phonegap.com/1.0/notification"  />
+	<feature  name="http://api.phonegap.com/1.0/media"  />
+	<feature  name="http://api.phonegap.com/1.0/network"  />
+	<feature  name="http://api.phonegap.com/1.0/contacts"  />
+	<gap:plugin  name="org.apache.cordova.inappbrowser" ></gap:plugin>
+	<gap:plugin  name="org.apache.cordova.device-motion" ></gap:plugin>
+	<gap:plugin  name="org.apache.cordova.network-information" ></gap:plugin>
+	<gap:plugin  name="org.apache.cordova.dialogs" ></gap:plugin>
+	<gap:plugin  name="org.apache.cordova.media-capture" ></gap:plugin>
+	<gap:plugin  name="org.apache.cordova.battery-status" ></gap:plugin>
+	<gap:plugin  name="org.apache.cordova.file-transfer"></gap:plugin>
+	<gap:plugin  name="org.apache.cordova.contacts" ></gap:plugin>
+	<gap:plugin  name="org.apache.cordova.file"></gap:plugin>
+	<gap:plugin  name="org.apache.cordova.device" ></gap:plugin>
+	<gap:plugin  name="org.apache.cordova.vibration" ></gap:plugin>
+	<gap:plugin  name="org.apache.cordova.media" ></gap:plugin>
+</widget>

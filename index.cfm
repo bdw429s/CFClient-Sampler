@@ -28,7 +28,8 @@
 					<li><a href="#notification">Notification API</a></li>
 					<li><a href="#contact">Contact API</a></li>
 					<li><a href="#accelerometer">Accelerometer API</a></li>
-					<li><a href="#rollTheBall">"Roll The Ball" Game</a></li>					
+					<li><a href="#rollTheBall">"Roll The Ball" Game</a></li>
+					<li><a href="#soundBoard">Adobe CF Sound Board</a></li>
 				</ul>					
 				<p>
 			</div>			
@@ -231,6 +232,43 @@
 				</style>
 				
 				<div id="rollTheBallContainer"><img src="images/ball.jpg" id="theBall" style="position:absolute;" height="64" width="64"></div>
+				
+			</div>
+			<div data-role="footer" data-position="fixed">
+				<h4>By <a href="http://www.codersrevolution.com" onClick="window.open( this.href, '_system' ); return false;">Brad Wood</a></h4>
+			</div>
+		</div>
+	
+		<div data-role="page" id="soundBoard">	
+			<div data-role="header" data-add-back-btn="true" data-position="fixed">
+				<h1>
+					<span style="position:relative">
+						CFClient Sampler
+					</span>
+				</h1>
+			</div>		
+			<div data-role="content">	
+				<h2>Adobe CF Sound Board</h2>
+				
+				Have you wanted to be like these great ColdFusion aficionados?  Well now you can impersonate them anytime with this
+				all-new Adobe CF Sound Board.  Just tap an image to hear each person introduce themselves.   
+				<br>
+				<br>
+				
+				<style>
+					.soundBoardImage {
+						display: inline-block;
+						text-align:center;
+						margin:5px;
+					}					
+				</style>
+				
+				<div class="soundBoardImage"><img src="images/ben.jpg" onClick="mediaPlay( 'media/audio/ben.mp3' )"><br>Ben Forta</div>
+				<div class="soundBoardImage"><img src="images/ray.jpg" onClick="mediaPlay( 'media/audio/ray.mp3' )"><br>Ray Camden</div>
+				<div class="soundBoardImage"><img src="images/rakshith.jpg" onClick="mediaPlay( 'media/audio/rakshith.mp3' )"><br>Rakshith Naresh</div>
+				<div class="soundBoardImage"><img src="images/elishia.jpg" onClick="mediaPlay( 'media/audio/elishia.mp3' )"><br>Elisia Dvorak</div>
+				<div class="soundBoardImage"><img src="images/anit.jpg" onClick="mediaPlay( 'media/audio/anit.mp3' )"><br>Anit Kumar Panda</div>
+				<div class="soundBoardImage"><img src="images/adrock.jpg" onClick="mediaPlay( 'media/audio/adrock.mp3' )"><br>Adrock</div>
 				
 			</div>
 			<div data-role="footer" data-position="fixed">
