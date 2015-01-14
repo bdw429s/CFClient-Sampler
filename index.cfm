@@ -303,11 +303,20 @@ Invalid construct: Either argument or name is missing., error on line: (144 now)
 						
 			$(document).on('pageinit', function(){
 				
+				// This is neccessary for the JQM loader to work.
+				// I'm not entirely sure why it doesn't "just work" out of the box
 				$( "body" ).loader({
 				  defaults: true
 				});
 			 
 			});
+			
+			// This is to return a device-generic fully qualified path to the
+			// root of the PhoneGap app.  Dissapointed PhoneGap doesn't do this for me.
+			function getPhonegapPath() {
+				var path = window.location.pathname;
+				return path.slice(0, path.indexOf("/www/") + 5);
+			}
 			
 			
 			/************************
@@ -651,6 +660,9 @@ Invalid construct: Either argument or name is missing., error on line: (144 now)
 				topLimit: ballHeight/2,
 				bottomLimit: playAreaHeight-( ballHeight/2 ),
 				
+				// Only do the sound effect/vibration once when the ball hits the wall
+				againstWall = false,
+				
 				// This will roll the ball in the amount specified in the x,y tuple
 				roll: function( rollOffset ) {
 					ballPos.x=ballPos.x+rollOffset.x;
@@ -658,10 +670,16 @@ Invalid construct: Either argument or name is missing., error on line: (144 now)
 									
 					// Haptic feedback what the ball reached the edge
 					if( ballPos.x > ballPos.rightLimit
-					|| ballPos.x < ballPos.leftLimit
-					|| ballPos.y > ballPos.bottomLimit
-					|| ballPos.y < ballPos.topLimit ) {
-						notifyVibrate( 50 );	
+						|| ballPos.x < ballPos.leftLimit
+						|| ballPos.y > ballPos.bottomLimit
+						|| ballPos.y < ballPos.topLimit ) {
+						if( !ballPos.againstWall ) {
+							randomBoing();
+							notifyVibrate( 50 );	
+							ballPos.againstWall = true;							
+						}
+					} else {
+						ballPos.againstWall = false;
 					}
 										
 					ballPos.keepInBounds();
@@ -694,7 +712,7 @@ Invalid construct: Either argument or name is missing., error on line: (144 now)
 		 	ballPos.place( { x: playAreaWidth/2, y: playAreaHeight/2 } );
 		 	         
 		 	function animateBallGame( data ) {
-		 		ballPos.roll( { x:  -int( data.x )*5, y: -int( data.y )*5 } );
+		 		ballPos.roll( { x:  -int( data.x )*10, y: -int( data.y )*10 } );
 		 	}
 		 	
 			function startBallGame() {
@@ -716,6 +734,33 @@ Invalid construct: Either argument or name is missing., error on line: (144 now)
 			$( '##rollTheBall' ).data( 'onPageUnLoad', function() {
 				stopBallGame();
 			});
+			
+						
+			/************************
+			* Media Client API
+			************************/
+			
+			// Play a random sound effect
+			function randomBoing() {
+				var sounds = [
+					'media/audio/boing_2.mp3',
+					'media/audio/boing_1.mp3',
+					'media/audio/bop.mp3',
+					'media/audio/dolphin.mp3',
+					'media/audio/drip.mp3',
+					'media/audio/explosion.mp3',
+					'media/audio/glass_breaking.mp3'
+				];
+				
+				var sound = sounds[ randRange( 1, arrayLen( sounds ) ) ];
+				mediaPlay( sound );
+			}
+			
+			// Pass in a path relative to the web root
+			function mediaPlay( src ) {
+				// Fully qualify the path
+				cfclient.audio.play( getPhonegapPath() + src );
+			}
 
 		} catch( any e ) {
 			console.log( e );
