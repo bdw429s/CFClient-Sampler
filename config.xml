@@ -18,6 +18,7 @@
 	<feature  name="http://api.phonegap.com/1.0/media"  />
 	<feature  name="http://api.phonegap.com/1.0/network"  />
 	<feature  name="http://api.phonegap.com/1.0/contacts"  />
+	<feature  name="http://api.phonegap.com/1.0/geolocation"  />
 	<gap:plugin  name="org.apache.cordova.inappbrowser" ></gap:plugin>
 	<gap:plugin  name="org.apache.cordova.device-motion" ></gap:plugin>
 	<gap:plugin  name="org.apache.cordova.network-information" ></gap:plugin>

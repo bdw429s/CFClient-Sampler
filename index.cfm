@@ -30,6 +30,7 @@
 					<li><a href="#accelerometer">Accelerometer API</a></li>
 					<li><a href="#rollTheBall">"Roll The Ball" Game</a></li>
 					<li><a href="#soundBoard">Adobe CF Sound Board</a></li>
+					<li><a href="#geolocation">Geolocation API</a></li>
 				</ul>					
 				<p>
 			</div>			
@@ -276,6 +277,38 @@
 			</div>
 		</div>
 	
+		<div data-role="page" id="geolocation">	
+			<div data-role="header" data-add-back-btn="true" data-position="fixed">
+				<h1>
+					<span style="position:relative">
+						CFClient Sampler
+					</span>
+				</h1>
+			</div>		
+			<div data-role="content">	
+				<h2>Geolocation API</h2>
+				
+				Want to know something scary? We know where you are.  Don't believe us?  Well, fasten your tin-foil hat and click below!   
+				<br>
+				<br>
+								
+				<div id="geolocationData"></div>
+				
+				<a data-icon="location" data-role="button" onCLick="getGeolocation();">Where's Waldo?</a>
+				<br>
+				<div data-role="fieldcontain">
+				 	<fieldset data-role="controlgroup">
+						<legend>Deep brain-scan technology</legend>
+						<input type="checkbox" name="highaccuracy" id="highaccuracy" class="custom" />
+						<label for="highaccuracy">Enable</label>
+				    </fieldset>
+				</div>
+			</div>
+			<div data-role="footer" data-position="fixed">
+				<h4>By <a href="http://www.codersrevolution.com" onClick="window.open( this.href, '_system' ); return false;">Brad Wood</a></h4>
+			</div>
+		</div>
+	
 		<div data-role="page" id="settings">		
 			<div data-role="header" data-add-back-btn="true" data-position="fixed">
 				<h1>
@@ -356,18 +389,21 @@ Invalid construct: Either argument or name is missing., error on line: (144 now)
 				return path.slice(0, path.indexOf("/www/") + 5);
 			}
 			
+				
+			include "/includes/notificationAPI.cfm";
+			include "/includes/accelerometerAPI.cfm";
+			include "/includes/connectionAPI.cfm";
+			include "/includes/contactAPI.cfm";
+			include "/includes/eventAPI.cfm";
+			include "/includes/mediaAPI.cfm";
+			include "/includes/rollTheBallGame.cfm";
+			include "/includes/geolocationAPI.cfm";
+
+			
 		} catch( any e ) {
 			console.log( e );
 		}
 	  	
 	</cfscript>
-	
-	<cfinclude template="/includes/notificationAPI.cfm">
-	<cfinclude template="/includes/accelerometerAPI.cfm">
-	<cfinclude template="/includes/connectionAPI.cfm">
-	<cfinclude template="/includes/contactAPI.cfm">
-	<cfinclude template="/includes/eventAPI.cfm">
-	<cfinclude template="/includes/mediaAPI.cfm">	
-	<cfinclude template="/includes/rollTheBallGame.cfm">
 	
 </cfclient>
